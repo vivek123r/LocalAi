@@ -112,7 +112,6 @@ jobs:
           set -eux
           # local.properties pins the SDK for the Gradle run
           echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
-          echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK}" >> local.properties
           /tmp/gradle-${GRADLE_VERSION}/bin/gradle :app:assembleRelease :app:assembleDebug \
             --no-daemon \
             --parallel \
