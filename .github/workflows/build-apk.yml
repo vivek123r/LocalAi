@@ -106,14 +106,14 @@ jobs:
               -dname "CN=Android Debug,O=Android,C=US"
           fi
 
-      - name: Assemble Release APK
+      - name: Assemble Release and Debug APKs
         working-directory: android
         run: |
           set -eux
           # local.properties pins the SDK for the Gradle run
           echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
           echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK}" >> local.properties
-          /tmp/gradle-${GRADLE_VERSION}/bin/gradle :app:assembleRelease \
+          /tmp/gradle-${GRADLE_VERSION}/bin/gradle :app:assembleRelease :app:assembleDebug \
             --no-daemon \
             --parallel \
             --max-workers=2 \
@@ -124,11 +124,20 @@ jobs:
           set -eux
           find android/app/build/outputs/apk -name '*.apk' -exec ls -lh {} \;
 
-      - name: Upload APK artifacts
+      - name: Upload Release APK artifacts
         uses: actions/upload-artifact@v4
         with:
           name: verdant-release-apk
           path: |
             android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload Debug APK (for real-time hot reload)
+        uses: actions/upload-artifact@v4
+        with:
+          name: verdant-debug-apk
+          path: |
+            android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 30
