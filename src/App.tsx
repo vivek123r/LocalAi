@@ -93,7 +93,9 @@ export default function App() {
       });
       setPhase('loading');
       // Small beat so the UI can paint "Loading…" before the heavy mmap.
-      await new Promise(r => setTimeout(r, 350));
+      await new Promise<void>(resolve => {
+        setTimeout(() => resolve(), 350);
+      });
       orchestrator.attachEngine(llamaEngine as any);
       await llamaEngine.load({ modelPath: dest });
       await saveModelId(info.id);
