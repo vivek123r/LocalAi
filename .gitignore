@@ -1,0 +1,38 @@
+# Node / RN
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Android
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+*.keystore
+!android/app/debug.keystore
+*.jks
+
+# iOS
+ios/Pods/
+ios/build/
+*.xcworkspace
+!default.xcworkspace
+
+# Metro / Hermes
+.metro-health-check*
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model binaries (never commit 700MB gguf)
+*.gguf
+*.bin
+models/

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Warm paper beige — matches the JS theme so the splash never flashes white/black -->
+    <color name="windowBackground">#F6F1E7</color>
+</resources>
