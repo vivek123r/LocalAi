@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   JAVA_VERSION: '17'
   GRADLE_VERSION: '8.14.3'
   ANDROID_PLATFORM: 'android-36'
@@ -36,6 +36,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
+          cache-dependency-path: package-lock.json
 
       - name: Set up JDK 17 (React Native 0.81 requirement)
         uses: actions/setup-java@v4
@@ -62,7 +63,12 @@ jobs:
           "$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK}/ndk-build" --version || true
 
       - name: Install JS deps (triggers llama.rn prebuilt C++ download)
-        run: npm ci --no-audit --no-fund
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
 
       - name: Verify llama.rn native libs landed
         run: |
@@ -84,6 +90,22 @@ jobs:
           unzip -q -o gradle.zip
           /tmp/gradle-${GRADLE_VERSION}/bin/gradle --version
 
+      - name: Ensure debug keystore exists
+        working-directory: android/app
+        run: |
+          if [ ! -f debug.keystore ]; then
+            echo "Generating debug.keystore for APK signing..."
+            keytool -genkeypair -v \
+              -keystore debug.keystore \
+              -alias androiddebugkey \
+              -keypass android \
+              -storepass android \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
       - name: Assemble Release APK
         working-directory: android
         run: |
@@ -92,6 +114,7 @@ jobs:
           echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
           echo "ndk.dir=$ANDROID_SDK_ROOT/ndk/${ANDROID_NDK}" >> local.properties
           /tmp/gradle-${GRADLE_VERSION}/bin/gradle :app:assembleRelease \
+            --no-daemon \
             --parallel \
             --max-workers=2 \
             -PreactNativeArchitectures="armeabi-v7a,arm64-v8a,x86,x86_64"

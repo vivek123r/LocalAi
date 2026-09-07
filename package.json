@@ -14,7 +14,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native/new-app-screen": "0.81.6",
-    "llama.rn": "^0.13.0",
+    "llama.rn": "^0.12.9",
     "react": "19.1.4",
     "react-native": "0.81.6",
     "react-native-blob-util": "^0.19.11",

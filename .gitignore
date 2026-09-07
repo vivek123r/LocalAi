@@ -2,7 +2,8 @@
 node_modules/
 npm-debug.log
 yarn-error.log
-package-lock.json
+# NOTE: package-lock.json is intentionally COMMITTED — `npm ci` and the
+# GitHub Actions npm cache both require it. Only yarn.lock stays ignored.
 yarn.lock
 
 # Android
